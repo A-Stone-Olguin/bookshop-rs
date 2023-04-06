@@ -19,3 +19,5 @@ This is a part of the University of Wyoming's Secure Software Design Course (Spr
 Start the api using `cargo run`
 
 I recommend using [`httpie`](https://httpie.io) for testing of HTTP endpoints on the terminal. Tutorials are available elsewhere online, and you're free to use whatever tools you deem appropriate for testing your code.
+
+For usage, here is an example: `echo '{"title": "Dune", "author": "Frank Herbert"}' | http GET localhost:8080/books/price` to return the price
