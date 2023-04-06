@@ -7,6 +7,8 @@ mod handlers;
 
 #[launch]
 fn rocket() -> _ {
+    log4rs::init_file("log4rs.yml", Default::default()).expect("Should initialize");
+    
     rocket::build()
         .mount("/books", routes![handlers::books::create_book])
         .mount("/books", routes![handlers::books::get_price])

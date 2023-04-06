@@ -1,0 +1,10 @@
+appenders:
+  my_file_logger:
+    kind: file
+    path: "logs.txt"
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S)(utc)} - {h({l})}: {m}{n}"
+root:
+  level: trace
+  appenders:
+    - my_file_logger
