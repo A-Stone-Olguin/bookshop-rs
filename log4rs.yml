@@ -1,5 +1,9 @@
 appenders:
-  my_file_logger:
+  std_out:
+    kind: console
+    encoder:
+      pattern: "{m}{n}"
+  my_file_logger_appender:
     kind: file
     path: "logs.txt"
     encoder:
@@ -7,4 +11,9 @@ appenders:
 root:
   level: trace
   appenders:
-    - my_file_logger
+    - std_out
+loggers: 
+  file:
+    level: trace 
+    appenders: 
+      - my_file_logger_appender

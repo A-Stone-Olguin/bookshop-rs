@@ -4,11 +4,12 @@ extern crate serde;
 
 mod db;
 mod handlers;
+use log::info;
 
 #[launch]
 fn rocket() -> _ {
-    // log4rs::init_file("log4rs.yml", Default::default()).expect("Should initialize");
-    
+    log4rs::init_file("log4rs.yml", Default::default()).expect("Should initialize");
+    info!(target: "file", "Rocket is initialized");
     rocket::build()
         .mount("/books", routes![handlers::books::create_book])
         .mount("/books", routes![handlers::books::get_price])
