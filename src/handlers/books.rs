@@ -37,11 +37,11 @@ pub fn create_book(book: Json<Book>) -> Result<(), String> {
 pub fn get_price(book: Json<Book>) -> Result<Json<Book>, String> {
     let title = match book.title.clone() {
         Some(t) => t,
-        None => return Err("No title provided".into()),
+        None => return Err("No title provided".to_string()),
     };
     let author = match book.author.clone() {
         Some(a) => a,
-        None => return Err("No author provided".into()),
+        None => return Err("No author provided".to_string()),
     };
 
     let bid = books::get_book_id(title, author);

@@ -30,11 +30,11 @@ pub fn create_order(order: Json<Order>) -> Result<(), String> {
 pub fn get_shipped(order: Json<Order>) -> Result<Json<Order>, String> {
     let cid = match order.customer_id.clone() {
         Some(c) => c,
-        None => return Err("No customer id provided".into()),
+        None => return Err("No customer id provided".to_string()),
     };
     let bid = match order.book_id.clone() {
         Some(b) => b,
-        None => return Err("No book id provided".into()),
+        None => return Err("No book id provided".to_string()),
     };
 
     let oid = purchaseOrders::get_purchase_order_id(cid, bid);

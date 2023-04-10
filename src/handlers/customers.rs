@@ -45,11 +45,11 @@ pub fn update_address(customer: Json<Customer>) -> Result<(), String> {
 pub fn get_balance(customer: Json<Customer>) -> Result<Json<Customer>, String> {
     let name = match customer.name.clone() {
         Some(n) => n,
-        None => return Err("No name provided".into()),
+        None => return Err("No name provided".to_string()),
     };
     let address = match customer.shipping_address.clone() {
         Some(a) => a,
-        None => return Err("No address provided".into()),
+        None => return Err("No address provided".to_string()),
     };
 
     let cid = customers::get_customer_id(name, address);
