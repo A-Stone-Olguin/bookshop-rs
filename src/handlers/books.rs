@@ -1,6 +1,7 @@
 use crate::db::books;
 use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
+use regex::Regex;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Book {
@@ -23,6 +24,12 @@ pub fn create_book(book: Json<Book>) -> Result<(), String> {
     let price = match book.price.clone() {
         Some(p) => p,
         None => return Err("No price provided".to_string()),
+    };
+    // Unwraps the regex error to see if it's a valid regex
+    let re = Regex::new(r"\d.\d{2}").unwrap();
+    match re.is_match(&price.to_string()) {  
+        true => 0,          // 0 return to mimic success
+        false => return Err("Please input a valid price of form X.XX, X is 0-9".to_string()),
     };
 
     books::create_book(title, author, price);
