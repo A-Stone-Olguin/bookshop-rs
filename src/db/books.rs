@@ -9,7 +9,7 @@ pub fn create_book(title: String, author: String, price: f64) {
     let mut stmt = db.prepare(query).expect("expected to prepare statement correctly");
     stmt.execute(&[(":title", &title), (":author", &author), (":price", &format!("{}",price))])
         .expect("expected to be able to insert into Books table");
-    info!(target: "file", "Successfully created book: Author: {}, Title: {}, Price: {}", author, title, price);
+    info!(target: "file", "Successfully created book: Author: {}, Title: {}, Price: {:.2}", author, title, price);
 }
 
 pub fn get_book_id(title: String, author: String) -> i64 {
@@ -21,9 +21,6 @@ pub fn get_book_id(title: String, author: String) -> i64 {
         .query_map(&[(":title", &title), (":author", &author)], |row| row.get(0))
         .expect("expected to be able to get id from Books table");
     let id = rows.next().unwrap().unwrap();
-
-    // Might remove in future, kinda messy
-    // info!(target: "file", "Successfully got book id: {}", id);
     return id;
 }
 
@@ -37,6 +34,6 @@ pub fn get_book_price(bid: i64) -> f64 {
         .expect("expected to be able to get price from Books table");
     let price = rows.next().unwrap().unwrap();
 
-    info!(target: "file", "Successfully got book id: {}'s price of {}", bid, price);
+    info!(target: "file", "Successfully got book id: {}'s price of {:.2}", bid, price);
     return price;
 }
