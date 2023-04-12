@@ -21,7 +21,7 @@ pub fn create_book(book: Json<Book>) -> Result<(), String> {
     title = title.trim().to_string(); // Remove leading and trailing whitespace:
     let valid_title = validate_name(title.clone(), String::from("title"));
     if !valid_title {
-        error!("Invalid title in create_book of {}", title);
+        error!("Invalid title in create_book: {}", title);
     }
     match valid_title {
         true => 0,  // Correct return code
@@ -35,7 +35,7 @@ pub fn create_book(book: Json<Book>) -> Result<(), String> {
     author = author.trim().to_string(); // Remove leading and trailing whitespace:
     let valid_author = validate_name(author.clone(), String::from("author"));
     if !valid_author {
-        error!("Invalid author in create_book of {}", author);
+        error!("Invalid author in create_book: {}", author);
     }
     match valid_author {
         true => 0,  // Correct return code
@@ -49,7 +49,7 @@ pub fn create_book(book: Json<Book>) -> Result<(), String> {
     };
     let valid_price = validate_price(price);
     if !valid_price {
-        error!("Invalid price in create_book of {}", price);
+        error!("Invalid price in create_book: {}", price);
     }
     match valid_price {
         true => 0, // Correct return code
@@ -66,13 +66,32 @@ pub fn create_book(book: Json<Book>) -> Result<(), String> {
 // sense in my mind
 #[get("/price", format = "json", data = "<book>")]
 pub fn get_price(book: Json<Book>) -> Result<Json<Book>, String> {
-    let title = match book.title.clone() {
+    let mut title = match book.title.clone() {
         Some(t) => t,
         None => return Err("No title provided".to_string()),
     };
-    let author = match book.author.clone() {
+    title = title.trim().to_string(); // Remove leading and trailing whitespace:
+    let valid_title = validate_name(title.clone(), String::from("title"));
+    if !valid_title {
+        error!("Invalid title in get_price: {}", title);
+    }
+    match valid_title {
+        true => 0,  // Correct return code
+        false => return Err("Please input a valid title:\n\t Please use only alphabet and numeric values.\n\t Please do not input empty space.".to_string()),
+    };
+
+    let mut author = match book.author.clone() {
         Some(a) => a,
         None => return Err("No author provided".to_string()),
+    };
+    author = author.trim().to_string(); // Remove leading and trailing whitespace:
+    let valid_author = validate_name(author.clone(), String::from("author"));
+    if !valid_author {
+        error!("Invalid author in get_price: {}", author);
+    }
+    match valid_author {
+        true => 0,  // Correct return code
+        false => return Err("Please input a valid author:\n\t Please use only alphabet and numeric values.\n\t Please do not input empty space.".to_string()),
     };
 
     let bid = books::get_book_id(title, author);
