@@ -92,7 +92,7 @@ pub fn get_balance(customer: Json<Customer>) -> Result<Json<Customer>, String> {
     };
 
     let cid = customers::get_customer_id(name, address);
-    let balance = customers::customer_balance(cid);
+    let balance = customers::get_customer_balance(cid);
     Ok(Json(Customer {
         id: None,
         name: None,

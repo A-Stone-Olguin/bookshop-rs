@@ -1,7 +1,7 @@
 use super::db::connect;
 use log::info;
 
-pub fn create_customer(name: String, address: String) -> i64 {
+pub fn create_customer(name: String, address: String) {
     let db = connect();
     // Default balance of 5 dollars is added
     let query = "INSERT INTO customers (name, shippingAddress, accountBalance) VALUES (:name, :address, 5.00)";
@@ -9,9 +9,6 @@ pub fn create_customer(name: String, address: String) -> i64 {
     stmt.execute(&[(":name", &name), (":address", &address)])
         .expect("expected to be able to insert into Customers table");
     info!(target: "file", "Successfully created customer: {}, Address: {}", name, address);
-
-    // TODO Why return statement? will check in future
-    return get_customer_id(name, address);
 }
 
 pub fn get_customer_id(name: String, address: String) -> i64 {
@@ -47,8 +44,7 @@ pub fn update_customer_address(cid: i64, address: String) {
     info!(target: "file", "Successfully updated address of cid {} to {}", cid, address);
 }
 
-// TODO change name to get_customer_balance
-pub fn customer_balance(cid: i64) -> f64 {
+pub fn get_customer_balance(cid: i64) -> f64 {
     let db = connect();
     let query = "SELECT accountBalance FROM customers WHERE id = :cid";
     let mut stmt = db.prepare(query).expect("expected to be able to select from Customers table");
