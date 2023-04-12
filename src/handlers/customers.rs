@@ -93,7 +93,7 @@ pub fn get_balance(customer: Json<Customer>) -> Result<String, String> {
     let cid = customers::get_customer_id(name.clone(), address);
     let balance = customers::get_customer_balance(cid);
 
-    let result_string = format!("Customer {} has balance: {}", name, balance);
+    let result_string = format!("Customer {} has balance: ${:.2}", name, balance);
     Ok(result_string)
 }
 

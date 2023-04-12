@@ -53,6 +53,6 @@ pub fn get_customer_balance(cid: i64) -> f64 {
         .query_map(&[(":cid", &format!("{}",cid))], |row| row.get(0))
         .expect("expected to be able to get accountBalance from Customers table");
     let balance = rows.next().unwrap().unwrap();
-    info!(target: "file", "Successfully retrieved cid {}'s balance: {}", cid, balance);
+    info!(target: "file", "Successfully retrieved cid {}'s balance: {:.2}", cid, balance);
     return balance;
 }
