@@ -2,6 +2,7 @@ use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
 
 use crate::db::customers;
+use log::error;
 
 // TODO Change validate_name process into a single function call
 #[derive(Serialize, Deserialize, Debug, Clone)]
