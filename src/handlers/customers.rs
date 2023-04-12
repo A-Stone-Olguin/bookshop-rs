@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 use crate::db::customers::{self, get_customer_id};
 use log::error;
 
-// TODO Add a way to check customer id function (Or print it)
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Customer {
     id: Option<i64>,
@@ -93,7 +92,7 @@ pub fn get_balance(customer: Json<Customer>) -> Result<String, String> {
     let cid = customers::get_customer_id(name.clone(), address);
     let balance = customers::get_customer_balance(cid);
 
-    let result_string = format!("Customer {} has balance: ${:.2}", name, balance);
+    let result_string = format!("Customer {}, with customerID {}, has balance: ${:.2}", name, cid, balance);
     Ok(result_string)
 }
 
