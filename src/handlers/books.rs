@@ -2,6 +2,7 @@ use crate::db::books;
 use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
 use regex::Regex;
+use log::error;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Book {
@@ -13,23 +14,46 @@ pub struct Book {
 
 #[post("/new", data = "<book>")]
 pub fn create_book(book: Json<Book>) -> Result<(), String> {
-    let title = match book.title.clone() {
+    let mut title = match book.title.clone() {
         Some(t) => t,
         None => return Err("No title provided".to_string()),
     };
-    let author = match book.author.clone() {
+    title = title.trim().to_string(); // Remove leading and trailing whitespace:
+    let valid_title = validate_name(title.clone(), String::from("title"));
+    if !valid_title {
+        error!("Invalid title in create_book of {}", title);
+    }
+    match valid_title {
+        true => 0,  // Correct return code
+        false => return Err("Please input a valid title:\n\t Please use only alphabet and numeric values.\n\t Please do not input empty space.".to_string()),
+    };
+
+    let mut author = match book.author.clone() {
         Some(a) => a,
         None => return Err("No author provided".to_string()),
     };
+    author = author.trim().to_string(); // Remove leading and trailing whitespace:
+    let valid_author = validate_name(author.clone(), String::from("author"));
+    if !valid_author {
+        error!("Invalid author in create_book of {}", author);
+    }
+    match valid_author {
+        true => 0,  // Correct return code
+        false => return Err("Please input a valid author:\n\t Please use only alphabet and numeric values.\n\t Please do not input empty space.".to_string()),
+    };
+
+    
     let price = match book.price.clone() {
         Some(p) => p,
         None => return Err("No price provided".to_string()),
     };
-    // Unwraps the regex error to see if it's a valid regex
-    let re = Regex::new(r"\d.\d{2}").unwrap();
-    match re.is_match(&price.to_string()) {  
-        true => 0,          // 0 return to mimic success
-        false => return Err("Please input a valid price of form X.XX, X is 0-9".to_string()),
+    let valid_price = validate_price(price);
+    if !valid_price {
+        error!("Invalid price in create_book of {}", price);
+    }
+    match valid_price {
+        true => 0, // Correct return code
+        false => return Err("Please input a valid price of form X.YY: 0 <= X <= 9999, Y is 0-9".to_string()),
     };
 
     books::create_book(title, author, price);
@@ -59,4 +83,25 @@ pub fn get_price(book: Json<Book>) -> Result<Json<Book>, String> {
         author: None,
         price: Some(price),
     }))
+}
+
+fn validate_price(price : f64) -> bool {
+    if price == 0.0 {
+        return false;
+    }
+
+    // Unwraps the regex error to see if it's a valid regex, decimals no greater than 10000
+    let re = Regex::new(r"\d{1,4}\.\d{2}0*").unwrap();
+    let valid = re.is_match(&price.to_string());
+
+    valid
+}
+
+fn validate_name(name : String, field : String) -> bool{
+    if name.is_empty() || name.chars().all(char::is_whitespace) {
+        error!("Empty input given in create_book, field: {}", field);
+        return false;
+    }
+    let valid = name.chars().all(|x| (x.is_alphanumeric() || x.is_whitespace()));
+    valid 
 }
