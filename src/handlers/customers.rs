@@ -1,5 +1,6 @@
 use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
+use regex::Regex;
 
 use crate::db::customers::{self, get_customer_id};
 use log::error;
@@ -22,9 +23,8 @@ pub fn create_customer(customer: Json<Customer>) -> Result<(), String> {
         Some(a) => a,
         None => return Err("No shipping_address provided".to_string()),
     };
-    // Remove leading and trailing whitespace
-    name = name.trim().to_string(); 
-    address = address.trim().to_string();
+    name = fix_whitespace(name.clone());
+    address = fix_whitespace(address.clone());
 
     match validate_alphanumeric_input(name.clone(), "name".to_string(), "create_customer".to_string()) {
         Ok(()) => 0,
@@ -49,9 +49,8 @@ pub fn update_address(customer: Json<Customer>) -> Result<(), String> {
         Some(a) => a,
         None => return Err("No shipping_address provided".to_string()),
     };
-    // Remove leading and trailing whitespace
-    name = name.trim().to_string(); 
-    address = address.trim().to_string();
+    name = fix_whitespace(name.clone());
+    address = fix_whitespace(address.clone());
 
     match validate_alphanumeric_input(name.clone(), "name".to_string(), "update_address".to_string()) {
         Ok(()) => 0,
@@ -76,9 +75,8 @@ pub fn get_balance(customer: Json<Customer>) -> Result<String, String> {
         Some(a) => a,
         None => return Err("No address provided".to_string()),
     };
-    // Remove leading and trailing whitespace:
-    name = name.trim().to_string(); 
-    address = address.trim().to_string();
+    name = fix_whitespace(name.clone());
+    address = fix_whitespace(address.clone());
     
     match validate_alphanumeric_input(name.clone(), "name".to_string(), "get_balance".to_string()) {
         Ok(()) => 0,
@@ -113,4 +111,12 @@ fn validate_alphanumeric_input(input : String, field : String, function: String)
         return Ok(());
     }
     
+}
+
+fn fix_whitespace(input : String) -> String {
+    // Remove spaces at beginning and end of string
+    let temp_string = input.trim().to_string();
+    // Remove extra spaces within
+    let ex_sp_re = Regex::new(r"\s+").unwrap();
+    return ex_sp_re.replace_all(temp_string.as_str(), " ").to_string();
 }

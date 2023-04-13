@@ -23,8 +23,8 @@ pub fn create_book(book: Json<Book>) -> Result<(), String> {
         None => return Err("No author provided".to_string()),
     };
     // Remove leading and trailing whitespace
-    title = title.trim().to_string(); 
-    author = author.trim().to_string();
+    title = fix_whitespace(title.clone());
+    author = fix_whitespace(author.clone());
 
     match validate_alphanumeric_input(title.clone(), "title".to_string(), "create_book".to_string()) {
         Ok(()) => 0,
@@ -64,8 +64,8 @@ pub fn get_price(book: Json<Book>) -> Result<String, String> {
         None => return Err("No author provided".to_string()),
     };
     // Remove leading and trailing whitespace
-    title = title.trim().to_string(); 
-    author = author.trim().to_string();
+    title = fix_whitespace(title.clone());
+    author = fix_whitespace(author.clone());
 
     match validate_alphanumeric_input(title.clone(), "title".to_string(), "get_price".to_string()) {
         Ok(()) => 0,
@@ -89,13 +89,12 @@ fn validate_price(price : f64, function : String) -> Result<(), String> {
         return Err(error_msg);
     }
     
-    // "Please input a valid price of form X.YY: 0 <= X <= 9999, Y is 0-9"
     // Unwraps the regex error to see if it's a valid regex, decimals no greater than 10000
     let re = Regex::new(r"\d{1,4}\.\d{2}0*").unwrap();
     let valid = re.is_match(&price.to_string());
     if !valid {
         error!(target: "file", "Invalid price in {}: {}", function, price);
-        let error_msg = "Please input a valid price of form X.YY: 0 <= X <= 9999, Y is 0-9".to_string();
+        let error_msg = "Please input a valid price of form X.YY: 0 <= X <= 9999, 0 <= Y <= 9".to_string();
         return Err(error_msg);
     }
     else {
@@ -118,6 +117,14 @@ fn validate_alphanumeric_input(input : String, field : String, function: String)
     }
     else {
         return Ok(());
-    }
-    
+    }   
+}
+
+
+fn fix_whitespace(input : String) -> String {
+    // Remove spaces at beginning and end of string
+    let temp_string = input.trim().to_string();
+    // Remove extra spaces within
+    let ex_sp_re = Regex::new(r"\s+").unwrap();
+    return ex_sp_re.replace_all(temp_string.as_str(), " ").to_string();
 }
