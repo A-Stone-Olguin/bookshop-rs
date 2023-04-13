@@ -13,11 +13,11 @@ pub struct Order {
 
 #[post("/new", data = "<order>")]
 pub fn create_order(order: Json<Order>) -> Result<String, String> {
-    let cid = match order.customer_id.clone() {
+    let cid = match order.customer_id {
         Some(c) => c,
         None => return Err("No customer id provided".to_string()),
     };
-    let bid = match order.book_id.clone() {
+    let bid = match order.book_id {
         Some(b) => b,
         None => return Err("No book id provided".to_string()),
     };
@@ -29,11 +29,11 @@ pub fn create_order(order: Json<Order>) -> Result<String, String> {
 
 #[get("/shipped", format = "json", data = "<order>")]
 pub fn get_shipped(order: Json<Order>) -> Result<String, String> {
-    let cid = match order.customer_id.clone() {
+    let cid = match order.customer_id {
         Some(c) => c,
         None => return Err("No customer id provided".to_string()),
     };
-    let bid = match order.book_id.clone() {
+    let bid = match order.book_id {
         Some(b) => b,
         None => return Err("No book id provided".to_string()),
     };
@@ -51,14 +51,15 @@ pub fn get_shipped(order: Json<Order>) -> Result<String, String> {
 }
 
 #[put("/ship", data = "<order>")]
-pub fn ship_order(order: Json<Order>) -> Result<(), String> {
+pub fn ship_order(order: Json<Order>) -> Result<String, String> {
     let oid = match order.order_id.clone() {
         Some(o) => o,
         None => return Err("No order id provided".to_string()),
     };
 
     purchaseOrders::ship_po(oid);
-    Ok(())
+    let success_msg = format!("Successfully shipped your Order ID: {}!", oid);
+    Ok(success_msg)
 }
 
 #[get("/status", format = "json", data = "<order>")]

@@ -9,7 +9,7 @@ pub fn create_purchase_order(cid: i64, bid: i64) -> i64 {
         .expect("expected to be able to insert into PurchaseOrders table");
     info!(target: "file", "Successfully created order of book id: {} from customer id: {}", bid, cid);
 
-    // TODO another return, need to investigate why
+    // This return is now used to give the user their order id
     return get_purchase_order_id(cid, bid);
 }
 

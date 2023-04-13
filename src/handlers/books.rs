@@ -22,7 +22,6 @@ pub fn create_book(book: Json<Book>) -> Result<(), String> {
         Some(a) => a,
         None => return Err("No author provided".to_string()),
     };
-    // Remove leading and trailing whitespace
     title = fix_whitespace(title.clone());
     author = fix_whitespace(author.clone());
 
@@ -36,7 +35,7 @@ pub fn create_book(book: Json<Book>) -> Result<(), String> {
     };
 
     
-    let price = match book.price.clone() {
+    let price = match book.price {
         Some(p) => p,
         None => return Err("No price provided".to_string()),
     };
@@ -63,7 +62,6 @@ pub fn get_price(book: Json<Book>) -> Result<String, String> {
         Some(a) => a,
         None => return Err("No author provided".to_string()),
     };
-    // Remove leading and trailing whitespace
     title = fix_whitespace(title.clone());
     author = fix_whitespace(author.clone());
 
