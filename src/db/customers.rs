@@ -1,5 +1,6 @@
 use super::db::connect;
-use log::info;
+use log::{info, error};
+use std::fmt::Debug;
 
 pub fn create_customer(name: String, address: String) {
     let db = connect();
@@ -60,7 +61,27 @@ pub fn get_customer_balance(cid: i64) -> f64 {
 pub fn update_customer_balance(cid : i64, balance : f64) {
     let db = connect();
     let query = "UPDATE customers SET accountBalance = :balance WHERE id = :cid";
-    let mut stmt = db.prepare(query).expect("expected to be able to update Customers table");
+    // let mut stmt = db.prepare(query).expect("expected to be able to update Customers table");
+    let mut stmt = db.prepare(query).log_expect("expected to be able to update Customers table");
     stmt.execute(&[(":balance", &balance), (":cid", &(cid as f64))]).expect("expected to be able to update Customers table");
     info!(target: "file", "Successfully updated balance of cid {} to {}", cid, balance);
+}
+
+pub trait LogErrResult<T, E : Debug> {
+    fn log_expect (self, msg: &str) -> T;
+}
+
+impl<T, E: Debug> LogErrResult<T, E> for Result<T, E> {
+    fn log_expect (self, msg: &str) -> T {
+        self.map_err(|e| {error!(target: "file", "{}: {:?}", msg, e); e}).expect(msg)
+    }
+    // fn log_expect (self, msg: &str) -> T {
+    //     match self {
+    //         Some (n) => n,
+    //         None => {
+    //             error!(target: "file", "{}", msg);
+    //             self.expect(msg)
+    //         },
+    //     }
+    // }
 }

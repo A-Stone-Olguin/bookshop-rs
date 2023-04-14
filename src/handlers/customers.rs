@@ -84,7 +84,7 @@ pub fn get_balance(customer: Json<Customer>) -> Result<String, String> {
 }
 
 
-#[get("/updateBalance", format = "json", data = "<customer>")]
+#[put("/updateBalance", data = "<customer>")]
 pub fn update_balance(customer: Json<Customer>) -> Result<String, String> {
     let mut name = match customer.name.clone() {
         Some(n) => n,
@@ -113,7 +113,7 @@ pub fn update_balance(customer: Json<Customer>) -> Result<String, String> {
     let cid = get_customer_id(name.clone(), address);
     customers::update_customer_balance(cid, balance);
 
-    let success_msg = format!("Successfully updated balance for customer: {} to {}", name, balance);
+    let success_msg = format!("Successfully updated balance for customer: {} to ${:.2}", name, balance);
     Ok(success_msg)
 }
 
@@ -125,11 +125,11 @@ fn validate_balance(balance : f64, function : String) -> Result<(), String> {
     }
     
     // Unwraps the regex error to see if it's a valid regex, decimals no greater than 10000
-    let re = Regex::new(r"\d{1,4}\.\d{2}0*").unwrap();
+    let re = Regex::new(r"\d{1,4}\.\d{2}$").unwrap();
     let valid = re.is_match(&balance.to_string());
     if !valid {
         error!(target: "file", "Invalid balance in {}: {}", function, balance);
-        let error_msg = "Please input a valid price of form X.YY: 0 <= X <= 9999, 0 <= Y <= 9".to_string();
+        let error_msg = "Please input a valid balance of form X.YY: 0 <= X <= 9999, 0 <= Y <= 9".to_string();
         return Err(error_msg);
     }
     else {
