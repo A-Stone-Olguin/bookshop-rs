@@ -1,3 +1,4 @@
+use log::warn;
 use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
 
@@ -11,22 +12,31 @@ pub struct Order {
     shipped: Option<i64>,
 }
 
-// TODO Do some validation on id numbers
-// TODO logging for insufficient funds
-// TODO logging example for orders
 #[post("/new", data = "<order>")]
 pub fn create_order(order: Json<Order>) -> Result<String, String> {
     let cid = match order.customer_id {
         Some(c) => c,
         None => return Err("No customer_id provided".to_string()),
     };
+    match cid > 0 {
+        true => 0,
+        false => return Err("Customer Id must be positive".to_string()),
+    };
     let bid = match order.book_id {
         Some(b) => b,
         None => return Err("No book_id provided".to_string()),
     };
+    match bid > 0 {
+        true => 0,
+        false => return Err("Book Id must be positive".to_string()),
+    };
     let balance = customers::get_customer_balance(cid);
     let price = books::get_book_price(bid);
 
+    match balance - price >= 0.0 {
+        true => (),
+        false => warn!(target: "file", "Insufficient funds for cid {}: Has ${:.2} but price is {:.2}", cid, balance, price),
+    }
     match balance - price >= 0.0 {
         true => 0,
         false => return Err(format!("Insufficient funds. You have ${:.2}, the price of the book is ${:.2}", balance, price)),
@@ -44,9 +54,17 @@ pub fn get_shipped(order: Json<Order>) -> Result<String, String> {
         Some(c) => c,
         None => return Err("No customer_id provided".to_string()),
     };
+    match cid > 0 {
+        true => 0,
+        false => return Err("Customer Id must be positive".to_string()),
+    };
     let bid = match order.book_id {
         Some(b) => b,
         None => return Err("No book_id provided".to_string()),
+    };
+    match bid > 0 {
+        true => 0,
+        false => return Err("Book Id must be positive".to_string()),
     };
 
     let oid = purchaseOrders::get_purchase_order_id(cid, bid);
@@ -67,6 +85,10 @@ pub fn ship_order(order: Json<Order>) -> Result<String, String> {
         Some(o) => o,
         None => return Err("No order_id provided".to_string()),
     };
+    match oid > 0 {
+        true => 0,
+        false => return Err("Order Id must be positive".to_string()),
+    };
 
     purchaseOrders::ship_po(oid);
     let success_msg = format!("Successfully shipped your Order ID: {}!", oid);
@@ -80,15 +102,27 @@ pub fn get_status(order: Json<Order>) -> Result<String, String> {
         Some(o) => o,
         None => return Err("No order_id provided".to_string()),
     };
+    match oid > 0 {
+        true => 0,
+        false => return Err("Order Id must be positive".to_string()),
+    };
 
     let cid = match order.customer_id.clone() {
         Some(c) => c,
         None => return Err("No customer_id provided".to_string()),
     };
+    match cid > 0 {
+        true => 0,
+        false => return Err("Customer Id must be positive".to_string()),
+    };
 
     let bid = match order.book_id.clone() {
         Some(b) => b,
         None => return Err("No book_id provided".to_string()),
+    };
+    match bid > 0 {
+        true => 0,
+        false => return Err("Book Id must be positive".to_string()),
     };
 
     let addr = customers::get_customer_address(cid);
