@@ -25,15 +25,10 @@ pub fn create_book(book: Json<Book>) -> Result<(), String> {
     title = fix_whitespace(title.clone());
     author = fix_whitespace(author.clone());
 
-    match validate_alphanumeric_input(title.clone(), "title".to_string(), "create_book".to_string()) {
-        Ok(()) => 0,
-        Err(err_msg) => return Err(err_msg),
-    };    
-    match validate_alphanumeric_input(author.clone(), "author".to_string(), "create_book".to_string()) {
+    match validate_title_and_author(title.clone(), author.clone()) {
         Ok(()) => 0,
         Err(err_msg) => return Err(err_msg),
     };
-
     
     let price = match book.price {
         Some(p) => p,
@@ -65,11 +60,7 @@ pub fn get_price(book: Json<Book>) -> Result<String, String> {
     title = fix_whitespace(title.clone());
     author = fix_whitespace(author.clone());
 
-    match validate_alphanumeric_input(title.clone(), "title".to_string(), "get_price".to_string()) {
-        Ok(()) => 0,
-        Err(err_msg) => return Err(err_msg),
-    };    
-    match validate_alphanumeric_input(author.clone(), "author".to_string(), "get_price".to_string()) {
+    match validate_title_and_author(title.clone(), author.clone()) {
         Ok(()) => 0,
         Err(err_msg) => return Err(err_msg),
     };
@@ -118,11 +109,23 @@ fn validate_alphanumeric_input(input : String, field : String, function: String)
     }   
 }
 
-
 fn fix_whitespace(input : String) -> String {
     // Remove spaces at beginning and end of string
     let temp_string = input.trim().to_string();
     // Remove extra spaces within
     let ex_sp_re = Regex::new(r"\s+").unwrap();
     return ex_sp_re.replace_all(temp_string.as_str(), " ").to_string();
+}
+
+// Validates both the names and addresses, returning errors if they fail
+fn validate_title_and_author(title : String, author : String) -> Result<(), String> {
+    match validate_alphanumeric_input(title.clone(), "title".to_string(), "get_balance".to_string()) {
+        Ok(()) => 0,
+        Err(err_msg) => return Err(err_msg),
+    };
+    match validate_alphanumeric_input(author.clone(), "author".to_string(), "get_balance".to_string()) {
+        Ok(()) => 0,
+        Err(err_msg) => return Err(err_msg),
+    };
+    return Ok(());
 }

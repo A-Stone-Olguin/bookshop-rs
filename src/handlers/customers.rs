@@ -26,11 +26,7 @@ pub fn create_customer(customer: Json<Customer>) -> Result<(), String> {
     name = fix_whitespace(name.clone());
     address = fix_whitespace(address.clone());
 
-    match validate_alphanumeric_input(name.clone(), "name".to_string(), "create_customer".to_string()) {
-        Ok(()) => 0,
-        Err(err_msg) => return Err(err_msg),
-    };
-    match validate_alphanumeric_input(address.clone(), "shipping_address".to_string(), "create_customer".to_string()) {
+    match validate_name_and_address(name.clone(), address.clone()) {
         Ok(()) => 0,
         Err(err_msg) => return Err(err_msg),
     };
@@ -52,11 +48,7 @@ pub fn update_address(customer: Json<Customer>) -> Result<(), String> {
     name = fix_whitespace(name.clone());
     address = fix_whitespace(address.clone());
 
-    match validate_alphanumeric_input(name.clone(), "name".to_string(), "update_address".to_string()) {
-        Ok(()) => 0,
-        Err(err_msg) => return Err(err_msg),
-    };
-    match validate_alphanumeric_input(address.clone(), "shipping_address".to_string(), "update_address".to_string()) {
+    match validate_name_and_address(name.clone(), address.clone()) {
         Ok(()) => 0,
         Err(err_msg) => return Err(err_msg),
     };
@@ -78,11 +70,7 @@ pub fn get_balance(customer: Json<Customer>) -> Result<String, String> {
     name = fix_whitespace(name.clone());
     address = fix_whitespace(address.clone());
     
-    match validate_alphanumeric_input(name.clone(), "name".to_string(), "get_balance".to_string()) {
-        Ok(()) => 0,
-        Err(err_msg) => return Err(err_msg),
-    };
-    match validate_alphanumeric_input(address.clone(), "address".to_string(), "get_balance".to_string()) {
+    match validate_name_and_address(name.clone(), address.clone()) {
         Ok(()) => 0,
         Err(err_msg) => return Err(err_msg),
     };
@@ -94,6 +82,7 @@ pub fn get_balance(customer: Json<Customer>) -> Result<String, String> {
     Ok(result_string)
 }
 
+// Allows only 
 fn validate_alphanumeric_input(input : String, field : String, function: String) -> Result<(), String>{
     if input.is_empty() || input.chars().all(char::is_whitespace) {
         error!(target: "file", "Empty input given in {}, field: {}", function, field);
@@ -110,7 +99,6 @@ fn validate_alphanumeric_input(input : String, field : String, function: String)
     else {
         return Ok(());
     }
-    
 }
 
 fn fix_whitespace(input : String) -> String {
@@ -119,4 +107,17 @@ fn fix_whitespace(input : String) -> String {
     // Remove extra spaces within
     let ex_sp_re = Regex::new(r"\s+").unwrap();
     return ex_sp_re.replace_all(temp_string.as_str(), " ").to_string();
+}
+
+// Validates both the names and addresses, returning errors if they fail
+fn validate_name_and_address(name : String, address : String) -> Result<(), String> {
+    match validate_alphanumeric_input(name.clone(), "name".to_string(), "get_balance".to_string()) {
+        Ok(()) => 0,
+        Err(err_msg) => return Err(err_msg),
+    };
+    match validate_alphanumeric_input(address.clone(), "address".to_string(), "get_balance".to_string()) {
+        Ok(()) => 0,
+        Err(err_msg) => return Err(err_msg),
+    };
+    return Ok(());
 }
