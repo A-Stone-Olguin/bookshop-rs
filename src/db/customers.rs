@@ -56,3 +56,11 @@ pub fn get_customer_balance(cid: i64) -> f64 {
     info!(target: "file", "Successfully retrieved cid {}'s balance: {:.2}", cid, balance);
     return balance;
 }
+
+pub fn update_customer_balance(cid : i64, balance : f64) {
+    let db = connect();
+    let query = "UPDATE customers SET accountBalance = :balance WHERE id = :cid";
+    let mut stmt = db.prepare(query).expect("expected to be able to update Customers table");
+    stmt.execute(&[(":balance", &balance), (":cid", &(cid as f64))]).expect("expected to be able to update Customers table");
+    info!(target: "file", "Successfully updated balance of cid {} to {}", cid, balance);
+}

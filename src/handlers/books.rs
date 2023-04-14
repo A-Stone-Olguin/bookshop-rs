@@ -25,7 +25,7 @@ pub fn create_book(book: Json<Book>) -> Result<(), String> {
     title = fix_whitespace(title.clone());
     author = fix_whitespace(author.clone());
 
-    match validate_title_and_author(title.clone(), author.clone()) {
+    match validate_title_and_author(title.clone(), author.clone(), "create_book".to_string()) {
         Ok(()) => 0,
         Err(err_msg) => return Err(err_msg),
     };
@@ -60,7 +60,7 @@ pub fn get_price(book: Json<Book>) -> Result<String, String> {
     title = fix_whitespace(title.clone());
     author = fix_whitespace(author.clone());
 
-    match validate_title_and_author(title.clone(), author.clone()) {
+    match validate_title_and_author(title.clone(), author.clone(), "get_price".to_string()) {
         Ok(()) => 0,
         Err(err_msg) => return Err(err_msg),
     };
@@ -91,6 +91,7 @@ fn validate_price(price : f64, function : String) -> Result<(), String> {
     }
 }
 
+// Allows only alphabetic and numeric input for these fields, no weird ones like 💜 or < or /
 fn validate_alphanumeric_input(input : String, field : String, function: String) -> Result<(), String>{
     if input.is_empty() || input.chars().all(char::is_whitespace) {
         error!(target: "file", "Empty input given in {}, field: {}", function, field);
@@ -118,12 +119,12 @@ fn fix_whitespace(input : String) -> String {
 }
 
 // Validates both the names and addresses, returning errors if they fail
-fn validate_title_and_author(title : String, author : String) -> Result<(), String> {
-    match validate_alphanumeric_input(title.clone(), "title".to_string(), "get_balance".to_string()) {
+fn validate_title_and_author(title : String, author : String, function: String) -> Result<(), String> {
+    match validate_alphanumeric_input(title.clone(), "title".to_string(), function.clone()) {
         Ok(()) => 0,
         Err(err_msg) => return Err(err_msg),
     };
-    match validate_alphanumeric_input(author.clone(), "author".to_string(), "get_balance".to_string()) {
+    match validate_alphanumeric_input(author.clone(), "author".to_string(), function) {
         Ok(()) => 0,
         Err(err_msg) => return Err(err_msg),
     };
