@@ -123,10 +123,17 @@ fn validate_balance(balance : f64, function : String) -> Result<(), String> {
         let error_msg = format!("Please give a positive value (>0) for balance");
         return Err(error_msg);
     }
-    
+    // Adding .'s to integer prices for regex
+    let mut balance_string = balance.to_string();
+    match balance_string.contains(".") {
+        true => (),
+        false => balance_string.push('.'),
+    };
+
+
     // Unwraps the regex error to see if it's a valid regex, decimals no greater than 10000
-    let re = Regex::new(r"\d{1,4}\.\d{2}$").unwrap();
-    let valid = re.is_match(&balance.to_string());
+    let re = Regex::new(r"^\d{1,4}\.\d{0,2}$").unwrap();
+    let valid = re.is_match(&balance_string);
     if !valid {
         error!(target: "file", "Invalid balance in {}: {}", function, balance);
         let error_msg = "Please input a valid balance of form X.YY: 0 <= X <= 9999, 0 <= Y <= 9".to_string();
