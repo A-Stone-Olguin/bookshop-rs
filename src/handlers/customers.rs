@@ -66,7 +66,7 @@ pub fn get_balance(customer: Json<Customer>) -> Result<String, String> {
     };
     let mut address = match customer.shipping_address.clone() {
         Some(a) => a,
-        None => return Err("No address provided".to_string()),
+        None => return Err("No shipping_address provided".to_string()),
     };
     name = fix_whitespace(name.clone());
     address = fix_whitespace(address.clone());
@@ -92,7 +92,7 @@ pub fn update_balance(customer: Json<Customer>) -> Result<String, String> {
     };
     let mut address = match customer.shipping_address.clone() {
         Some(a) => a,
-        None => return Err("No address provided".to_string()),
+        None => return Err("No shipping_address provided".to_string()),
     };
     name = fix_whitespace(name.clone());
     address = fix_whitespace(address.clone());
