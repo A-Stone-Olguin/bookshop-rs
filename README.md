@@ -64,3 +64,33 @@ As for functions that don't work quite as intended, `get_balance` returns a cust
 This is uninformitive, since the function implies that we only get the balance value, but more is returned.
 Some change such as `display_customer_balance` would be more informative, while the return of that function should be changed.
 This issue has issues similar in the `get_price` and `get_shipped` functions which are slightly misinformative.
+
+## Further analysis after fixes
+This section is about the further security issues found after implementing changes, finding issues as the code was worked with.
+
+The update address function involved getting a customer Id with the new address in the `get_customer_id` function, which has been overwritten.
+This needed a change by utilizing customer id to be specified instead.
+
+On the topics of id numbers for customers and books, these were never provided to a user, but they needed to be provided for making any orders.
+
+The return types of a few functions were JSON objects, which were removed since they usually had null options, which cluttered up the output.
+Also, the possible HTML vulnerability was removed.
+Nowhere else was HTML used, so a simple response of a string was output to the terminal that told the same information.
+The HTML also was missing a `<head>` in its construction, so it was also incorrect which could be an issue.
+
+Books could also be ordered from a user with an incorrect balance.
+This was rectified in my changes, and balances are updated to reflect the changed orders.
+
+## My changes
+I utilized input validation on every string that was provided by only allowing alphanumeric characters and commas and periods.
+These can be reflected in the `logs.txt` example that is in the repo.
+Things like 💖 are rejected, while characters like 农 are accepted.
+If a user misinputs on any field for piping to the request, they are told what field is incorrect, and for what reason, such as empty spaces or non-alphanumeric characters being used.
+
+Prices for book price or customer balance were only allowed to be between 0.01 and 9999.99, with ony two digits being allowed for a price.
+If a user misinputs price or balance, they are told that their input is not a valid input.
+The typing of Rust does not allow for strings to be input, so that validation is already in place from the language.
+
+As for logging, I had the info of database operations be logged as info tags.
+The warning and error tags are given in the handlers files, and as such, there isn't as much clutter with those.
+Each of the warnings or errors show what invalid inputs were given.
