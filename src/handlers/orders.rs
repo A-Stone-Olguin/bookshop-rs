@@ -1,7 +1,7 @@
 use rocket::serde::json::Json;
 use serde::{Deserialize, Serialize};
 
-use crate::db::{customers, purchaseOrders};
+use crate::db::{customers, purchaseOrders, books};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Order {
@@ -21,9 +21,17 @@ pub fn create_order(order: Json<Order>) -> Result<String, String> {
         Some(b) => b,
         None => return Err("No book id provided".to_string()),
     };
+    let balance = customers::get_customer_balance(cid);
+    let price = books::get_book_price(bid);
+
+    match balance - price >= 0.0 {
+        true => 0,
+        false => return Err(format!("Insufficient funds. You have ${:.2}, the price of the book is {:.2}", balance, price)),
+    };
+    customers::update_customer_balance(cid, balance-price);
 
     let oid = purchaseOrders::create_purchase_order(cid, bid);
-    let success_msg = format!("Successfully created order for TODO!\n\t Your orderId is {}", oid);
+    let success_msg = format!("Successfully created order for Customer id: {}\n\t Your orderId is {}", cid, oid);
     Ok(success_msg)
 }
 
