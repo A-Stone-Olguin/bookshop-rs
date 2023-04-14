@@ -11,7 +11,6 @@
 2023-04-14 18:12:58 - INFO: Successfully created book: Author: you, Title: test order, Price: 7.99
 2023-04-14 18:14:02 - INFO: Successfully created customer: Stone, Address: 123 south st
 2023-04-14 18:14:40 - ERROR: Invalid name in create_customer: 💖
-2023-04-14 18:16:01 - ERROR: Invalid address in create_customer: 123 south st.
 2023-04-14 18:16:07 - INFO: Successfully created customer: Jürgen 农历新年, Address: 123 south st
 2023-04-14 18:16:34 - INFO: Successfully retrieved cid 2's balance: 5.00
 2023-04-14 18:16:59 - ERROR: Invalid address in get_balance: 123 south st!
@@ -25,3 +24,17 @@
 2023-04-14 18:28:17 - INFO: Successfully updated address of cid 2 to 123 north st
 2023-04-14 18:43:58 - INFO: Successfully retrieved cid 1's balance: 5.00
 2023-04-14 18:43:58 - INFO: Successfully got book id: 7's price of 7.99
+2023-04-14 21:25:51 - INFO: Successfully retrieved cid 1's balance: 5.00
+2023-04-14 21:25:51 - INFO: Successfully got book id: 7's price of 7.99
+2023-04-14 21:25:51 - WARN: Insufficient funds for cid 1: Has $5.00 but price is 7.99
+2023-04-14 21:26:13 - INFO: Successfully retrieved cid 2's balance: 79.99
+2023-04-14 21:26:13 - INFO: Successfully got book id: 7's price of 7.99
+2023-04-14 21:26:13 - INFO: Successfully updated balance of cid 2 to 72
+2023-04-14 21:26:13 - INFO: Successfully created order of book id: 7 from customer id: 2
+2023-04-14 21:28:56 - INFO: Successfully retrieved cid 2's balance: 72.00
+2023-04-14 21:30:28 - INFO: Successfully retrieved cid 2's address: 123 north st
+2023-04-14 21:30:28 - INFO: Successfully got shipping status of 0 for purchase order id 1
+2023-04-14 21:31:00 - INFO: Successfully got shipping status of 0 for purchase order id 1
+2023-04-14 21:31:20 - INFO: Successfully updated shipped status of purchase order id 1 to 1
+2023-04-14 21:31:34 - INFO: Successfully retrieved cid 2's address: 123 north st
+2023-04-14 21:31:34 - INFO: Successfully got shipping status of 1 for purchase order id 1
