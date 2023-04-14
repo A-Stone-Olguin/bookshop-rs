@@ -105,7 +105,7 @@ fn validate_alphanumeric_input(input : String, field : String, function: String)
         let error_msg = format!("Please input a valid {}:\n\t Please do not input only empty space.", field);
         return Err(error_msg);
     }
-    let valid = input.chars().all(|x| (x.is_alphanumeric() || x.is_whitespace())); // Gets only 'word' characters and spaces
+    let valid = input.chars().all(|x| (x.is_alphanumeric() || x.is_whitespace() || x == '.' || x == ',')); // Gets only 'word' characters and spaces
 
     if !valid {
         error!(target: "file", "Invalid {} in {}: {}", field, function, input);
