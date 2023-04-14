@@ -11,6 +11,9 @@ pub struct Order {
     shipped: Option<i64>,
 }
 
+// TODO Do some validation on id numbers
+// TODO logging for insufficient funds
+// TODO logging example for orders
 #[post("/new", data = "<order>")]
 pub fn create_order(order: Json<Order>) -> Result<String, String> {
     let cid = match order.customer_id {
@@ -26,7 +29,7 @@ pub fn create_order(order: Json<Order>) -> Result<String, String> {
 
     match balance - price >= 0.0 {
         true => 0,
-        false => return Err(format!("Insufficient funds. You have ${:.2}, the price of the book is {:.2}", balance, price)),
+        false => return Err(format!("Insufficient funds. You have ${:.2}, the price of the book is ${:.2}", balance, price)),
     };
     customers::update_customer_balance(cid, balance-price);
 

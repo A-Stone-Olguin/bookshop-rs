@@ -37,24 +37,26 @@ pub fn create_customer(customer: Json<Customer>) -> Result<(), String> {
 
 #[put("/updateAddress", data = "<customer>")]
 pub fn update_address(customer: Json<Customer>) -> Result<String, String> {
-    let mut name = match customer.name.clone() {
-        Some(n) => n,
-        None => return Err("No name provided".to_string()),
-    };
     let mut address = match customer.shipping_address.clone() {
         Some(a) => a,
         None => return Err("No shipping_address provided".to_string()),
     };
-    name = fix_whitespace(name.clone());
     address = fix_whitespace(address.clone());
-
-    match validate_name_and_address(name.clone(), address.clone(), "update_address".to_string()) {
+    match validate_alphanumeric_input(address.clone(), "address".to_string(), "update_address".to_string()) {
         Ok(()) => 0,
         Err(err_msg) => return Err(err_msg),
     };
-    let cid = get_customer_id(name.clone(), address.clone());
+
+    let cid= match customer.id {
+        Some(a) => a,
+        None => return Err("No id provided".to_string()),
+    };
+    match cid > 0 {
+        true => 0,
+        false => return Err("Id numbers must be positive".to_string()),
+    };
     customers::update_customer_address(cid, address.clone());
-    let success_msg = format!("Successfully updated address for customer: {} to {}", name, address);
+    let success_msg = format!("Successfully updated address for customer ID: {} to {}", cid, address);
     Ok(success_msg)
 }
 
